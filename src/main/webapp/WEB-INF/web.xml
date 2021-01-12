@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    <!-- ========================================================== -->
+    <!-- General -->
+    <!-- Resource: -->
+    <!-- o http://wiki.metawerx.net/wiki/Web.xml -->
+    <!-- ========================================================== -->
+
+    <!-- Name the application -->
+    <display-name>servletMirrorApp</display-name>
+    <description>Servlet Mirror WebApp - InterFac</description>
+
+    <!-- ========================================================== -->
+    <!-- Servlets -->
+    <!-- ========================================================== -->
+    <servlet>
+        <servlet-name>mirrorMonitor01Servlet</servlet-name>
+        <servlet-class>com.stupica.servlet.http.Monitor</servlet-class>
+        <load-on-startup>1</load-on-startup>
+        <!--
+        <description>Lenko REST service for ..</description>
+        -->
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>mirrorMonitor01Servlet</servlet-name>
+        <url-pattern>/monitor/v1/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>mirror01Servlet</servlet-name>
+        <servlet-class>com.stupica.servlet.http.Mirror</servlet-class>
+        <load-on-startup>1</load-on-startup>
+        <!--
+        <description>Lenko REST service for ..</description>
+        -->
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>mirror01Servlet</servlet-name>
+        <url-pattern>/v1/*</url-pattern>
+    </servlet-mapping>
+
+    <session-config>
+        <session-timeout>1</session-timeout>
+    </session-config>
+
+
+    <!-- ========================================================== -->
+    <!-- JNDI Environment Variables -->
+    <!-- ========================================================== -->
+    <!--
+    <env-entry>
+        <env-entry-name>JDBC_TYPE</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>MySQL</env-entry-value>
+    </env-entry>
+    -->
+
+
+    <!-- ========================================================== -->
+    <!-- Welcome Files -->
+    <!-- ========================================================== -->
+
+    <!-- Define, in order of preference, which file to show when no filename is defined in the path -->
+    <!-- eg: when user goes to http://yoursite.com/ or http://yoursite.com/somefolder -->
+    <!-- Defaults are provided in the server-wide web.xml file, such as index.jsp, index.htm -->
+    <!-- Note: using this tag overrides the defaults, so don't forget to add them here -->
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.htm</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Secure resources</web-resource-name>
+            <url-pattern>/v1/*</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+    <!--
+    <url-pattern>/docInv/v1/*</url-pattern>
+    <filter-pattern>*</filter-pattern>
+    -->
+</web-app>

@@ -1,0 +1,102 @@
+<project>
+    <!-- model version is always 4.0.0 for Maven 2.x POMs -->
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- project coordinates.. -->
+    <groupId>com.stupica.base</groupId>
+    <artifactId>servletMirror</artifactId>
+    <version>1.0.1</version>
+    <packaging>war</packaging>
+    <name>servletMirror</name>
+    <organization>
+        <name>developer.stupica.com</name>
+        <url>http://www.stupica.com</url>
+    </organization>
+    <url>http://developer.stupica.com/maven</url>
+
+    <properties>
+        <java-version>1.8</java-version>
+        <maven.compiler.source>${java-version}</maven.compiler.source>
+        <maven.compiler.target>${java-version}</maven.compiler.target>
+
+        <version.jetty>9.4.19.v20190610</version.jetty>
+    </properties>
+
+    <!-- library dependencies -->
+    <dependencies>
+        <dependency>
+            <groupId>com.stupica.base</groupId>
+            <artifactId>servletCore</artifactId>
+            <version>[1.9,2)</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+		<!--
+        <finalName>servletMirror</finalName>
+        -->
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.2.3</version>
+                <configuration>
+                    <archive>
+                        <!--
+                        <manifestFile>src/main/webapp/META-INF/MANIFEST.MF</manifestFile>
+                        -->
+                        <manifestEntries>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                            <Specification-Version>${project.version}</Specification-Version>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${version.jetty}</version>
+                <configuration>
+                    <jettyXml>
+                        ${project.basedir}/jetty.xml,${project.basedir}/jetty-ssl.xml,${project.basedir}/jetty-https.xml
+                    </jettyXml>
+                    <!--
+                    <jettyXml>
+                        ${project.basedir}/jetty.xml,${project.basedir}/jetty-http.xml,${project.basedir}/jetty-ssl.xml,${project.basedir}/jetty-https.xml
+                    </jettyXml>
+                    -->
+                    <scanIntervalSeconds>11</scanIntervalSeconds>
+                    <webApp>
+                        <contextPath>/mirror</contextPath>
+                    </webApp>
+                    <httpConnector>
+                        <port>11080</port>
+                    </httpConnector>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <developers>
+        <developer>
+            <id>bostjanst</id>
+            <name>Bostjan Stupica</name>
+            <email>bostjan@stupica.com</email>
+            <url>http://www.stupica.com</url>
+            <organization>Developer404</organization>
+            <organizationUrl>http://www.stupica.com</organizationUrl>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+                <role>admin</role>
+            </roles>
+            <timezone>Europe/Ljubljana</timezone>
+            <properties>
+                <picUrl>http://bostjan.dev404.net/about_me/myimg01.jpg</picUrl>
+            </properties>
+        </developer>
+    </developers>
+
+</project>
