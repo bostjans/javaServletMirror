@@ -1,7 +1,7 @@
 # javaServletMirror
 HTTP Mirror or feedback page
 
-![JavaCI-Maven-ServletMirror](https://github.com/bostjans/javaServletMirror/workflows/JavaCI-Maven-ServletMirror/badge.svg)
+![CI-Maven-ServletMirror](https://github.com/bostjans/javaServletMirror/workflows/CI-Maven-ServletMirror/badge.svg)
 
 ## DEV
 
