@@ -43,9 +43,6 @@
                 <version>3.2.3</version>
                 <configuration>
                     <archive>
-                        <!--
-                        <manifestFile>src/main/webapp/META-INF/MANIFEST.MF</manifestFile>
-                        -->
                         <manifestEntries>
                             <Implementation-Version>${project.version}</Implementation-Version>
                             <Specification-Version>${project.version}</Specification-Version>
