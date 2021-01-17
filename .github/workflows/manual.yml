@@ -29,10 +29,13 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
+          server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+          settings-path: ${{ github.workspace }} # location for the settings.xml file
       - name: maven-settings-xml-action
         uses: whelk-io/maven-settings-xml-action@v14
         with:
           repositories: '[{ "id": "bDev", "url": "http://developer.stupica.com/maven" }]'
+
       - name: Build with Maven
         run: mvn -B package --file pom.xml
       - name: CreateRelease
@@ -41,9 +44,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: d20210112
-          release_name: Release test-002
+          tag_name: d20210117a
+          release_name: Release test-003
           body: |
             Release testing - ${{ github.ref }} ..
           draft: false
           prerelease: true
+
+      - name: Publish to GitHub Packages Apache Maven
+        run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token

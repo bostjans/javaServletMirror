@@ -20,6 +20,9 @@
         <maven.compiler.target>${java-version}</maven.compiler.target>
 
         <version.jetty>9.4.19.v20190610</version.jetty>
+
+        <!-- ID identifier - in settings.xml: servers -->
+        <project.scm.id>github</project.scm.id>
     </properties>
 
     <!-- library dependencies -->
@@ -75,6 +78,14 @@
             </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub</name>
+            <url>https://maven.pkg.github.com/bostjans/javaServletMirror</url>
+        </repository>
+    </distributionManagement>
 
     <developers>
         <developer>
