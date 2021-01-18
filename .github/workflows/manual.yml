@@ -44,8 +44,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: d20210118b
-          release_name: Release test-006
+          tag_name: d20210118c
+          release_name: Release test-007
           body: |
             Release testing - ${{ github.ref }} ..
           draft: false
@@ -60,7 +60,7 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
           asset_path: target/servletMirror-*.war
           asset_name: servletMirror.war
-#          asset_content_type: application/zip
+          asset_content_type: application/java-archive
 
 #      - name: Archive production artifacts
 #        uses: actions/upload-artifact@v2
