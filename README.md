@@ -45,6 +45,7 @@ URL:
 ## Reference
 
 * http://juplo.de/configure-https-for-jetty-maven-plugin-9-0-x/
+* https://www.blackpepper.co.uk/blog/jetty-runner-https-xml-configuration
 * ----
 * https://webhook.site/
 * https://hookbin.com/

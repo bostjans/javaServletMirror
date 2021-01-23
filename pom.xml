@@ -19,7 +19,10 @@
         <maven.compiler.source>${java-version}</maven.compiler.source>
         <maven.compiler.target>${java-version}</maven.compiler.target>
 
-        <version.jetty>9.4.19.v20190610</version.jetty>
+        <version.jetty>9.4.36.v20210114</version.jetty>
+        <!--
+        <version.jetty>10.0.0</version.jetty>
+        -->
 
         <!-- ID identifier - in settings.xml: servers -->
         <project.scm.id>github</project.scm.id>
