@@ -5,7 +5,7 @@
     <!-- project coordinates.. -->
     <groupId>com.stupica.base</groupId>
     <artifactId>servletMirror</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>war</packaging>
     <name>servletMirror</name>
     <organization>
@@ -50,9 +50,7 @@
     </repositories>
 
     <build>
-		<!--
         <finalName>servletMirror</finalName>
-        -->
 
         <plugins>
             <plugin>
@@ -90,6 +88,28 @@
                         <port>11080</port>
                     </httpConnector>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.2</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals><goal>copy</goal></goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.eclipse.jetty</groupId>
+                                    <artifactId>jetty-runner</artifactId>
+                                    <version>${version.jetty}</version>
+                                    <destFileName>jetty-runner.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
