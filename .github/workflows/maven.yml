@@ -32,8 +32,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: r1_0_2a
-          release_name: Release_1.0.2
+          tag_name: r1_0_2b
+          release_name: Release_1.0.2b
           body: |
             Release testing - ${{ github.ref }} ..
           draft: false
