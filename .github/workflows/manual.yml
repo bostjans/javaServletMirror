@@ -44,8 +44,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: d20210124b
-          release_name: Release_d20210124b
+          tag_name: d20210124c
+          release_name: Release_d20210124c
           body: |
             Release testing - ${{ github.ref }} ..
           draft: false
@@ -65,7 +65,7 @@ jobs:
       - name: Build project # This would actually build your project, using zip for an example artifact
         id: pack-release
         run: |
-          mkdir build/servletMirror
+          mkdir -p build/servletMirror
           cp target/servletMirror.war build/servletMirror/
           cp target/dependency/jetty-runner.jar build/servletMirror/
           cp jetty-runner.xml build/servletMirror/
