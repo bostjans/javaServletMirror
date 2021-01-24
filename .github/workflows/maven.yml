@@ -32,10 +32,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: r1_0_2b
-          release_name: Release_1.0.2b
+          tag_name: r1_0_3a
+          release_name: Release_1.0.3a
           body: |
-            Release testing - ${{ github.ref }} ..
+            Release - ${{ github.ref }}
+            All HTTP methods supported - produce Text capture of PUT operation.
           draft: false
           prerelease: true
 
@@ -49,3 +50,24 @@ jobs:
           asset_path: target/servletMirror.war
           asset_name: servletMirror.war
           asset_content_type: application/java-archive
+
+      - name: Build project # This would actually build your project, using zip for an example artifact
+        id: pack-release
+        run: |
+          mkdir -p build/servletMirror
+          cp target/servletMirror.war build/servletMirror/
+          cp target/dependency/jetty-runner.jar build/servletMirror/
+          cp jetty-runner.xml build/servletMirror/
+          cp *.jks build/servletMirror/
+          cp run01.sh build/servletMirror/
+          zip -9 -r target/servletMirror.zip build/servletMirror
+      - name: Upload Release Asset - zip
+        id: upload-release-asset2
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: target/servletMirror.zip
+          asset_name: servletMirror.zip
+          asset_content_type: application/zip

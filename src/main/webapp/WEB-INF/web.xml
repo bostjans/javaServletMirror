@@ -41,6 +41,16 @@
         <url-pattern>/v1/*</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>mirrorShowServlet</servlet-name>
+        <servlet-class>com.stupica.servlet.http.MirrorShow</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>mirrorShowServlet</servlet-name>
+        <url-pattern>/show/v1/*</url-pattern>
+    </servlet-mapping>
+
     <session-config>
         <session-timeout>1</session-timeout>
     </session-config>
