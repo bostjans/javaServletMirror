@@ -35,7 +35,7 @@ public class MirrorShow extends ServiceBase {
      * @apiSampleRequest /mirrorShow/v1/
      *
      * @apiExample {curl} Example usage:
-     *     curl -i http://localhost:11080/mirrorShow/v1
+     *     curl -i http://localhost:11080/mirror/show/v1
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Local variables

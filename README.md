@@ -26,7 +26,7 @@ Mirror page:
 curl -i http://localhost:11080
 curl -i http://localhost:11080/mirror/
 curl -i http://localhost:11080/mirror/v1
-curl -i http://localhost:11080/mirrorShow/v1
+curl -i http://localhost:11080/mirror/show/v1
 curl -i --insecure https://localhost:11443/mirror/v1
 ```
 
