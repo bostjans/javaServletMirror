@@ -211,7 +211,7 @@ public class Mirror extends ServiceBase {
             response.setContentType("text/plain; charset=UTF-8");
             response.setCharacterEncoding("UTF-8");
 
-            sHttpData = getReportText(request, "GET");
+            sHttpData = getReportText(request, asMethod);
         }
 
         // Check previous step
@@ -272,7 +272,7 @@ public class Mirror extends ServiceBase {
 
             //long currentTimeMillis = System.currentTimeMillis();
             Date    dtNow = new Date();
-            String requestIdent = "IdAccess/IdDostopa: " + dtNow.getTime();
+            String requestIdent = "IdAccess/IdDostopa: " + ServiceMirror.iCountReq.get() + ":" + dtNow.getTime();
             logger.info("doGet(): " + requestIdent);
             logger.fine(headers);
             sHttpData.append(requestIdent);
@@ -351,7 +351,7 @@ public class Mirror extends ServiceBase {
         sHttpData.append("-- End of report. --<");
 
         // Notify Service
-        ServiceMirror.getInstance().notifyOnRequest(sHttpData.toString());
+        ServiceMirror.getInstance().notifyOnRequest(asMethod, sHttpData.toString());
         return sHttpData.toString();
     }
 
