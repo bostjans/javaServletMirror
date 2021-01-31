@@ -33,6 +33,8 @@ import static com.stupica.ConstWeb.*;
  */
 public class Mirror extends ServiceBase {
 
+    private static int      iLenPayloadMax = 8196;
+
     private static Logger logger = Logger.getLogger(Mirror.class.getName());
 
 
@@ -97,6 +99,7 @@ public class Mirror extends ServiceBase {
      *
      * @apiExample {curl} Example usage:
      *     curl -i -X POST --insecure https://localhost:11443/mirror/v1
+     *     curl -i -X POST --insecure https://localhost:11443/mirror/v1 --header "Content-Type: application/text" -d "test"
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doRequest(HTTP_METHOD_NAME_POST, request, response);
@@ -191,7 +194,7 @@ public class Mirror extends ServiceBase {
         } else if (asMethod.contentEquals(HTTP_METHOD_NAME_PATCH)) {
             super.doPost(request, response);
         } else if (asMethod.contentEquals(HTTP_METHOD_NAME_DELETE)) {
-            super.doPost(request, response);
+            super.doDelete(request, response);
         } else {
             iResult = response.getStatus();
             objResult.sText = "doRequest(): Unknown method! asMethod: " + asMethod;
@@ -202,7 +205,7 @@ public class Mirror extends ServiceBase {
         // Check ..
         if (response.getStatus() != ConstWeb.HTTP_RESP_OK) {
             iResult = response.getStatus();
-            objResult.sText = "doGet(): StatusCode indicates error in prior verification! Status: " + response.getStatus();
+            objResult.sText = "doRequest(): StatusCode indicates error in prior verification! Status: " + response.getStatus();
             logger.warning(objResult.sText);
         }
 
@@ -212,10 +215,15 @@ public class Mirror extends ServiceBase {
             response.setCharacterEncoding("UTF-8");
 
             sHttpData = getReportText(request, asMethod);
+            if (UtilString.isEmptyTrim(sHttpData)) {
+                objResult.sText = "doRequest(): Request info. not collected! Status: " + response.getStatus();
+                logger.warning(objResult.sText);
+                iResult = ConstGlobal.RETURN_WARN;
+            }
         }
 
         // Check previous step
-        if (iResult == ConstGlobal.RETURN_OK) {
+        if (iResult != ConstGlobal.RETURN_ERROR) {
             objOut = response.getWriter();
             if (objOut == null) {
                 iResult = ConstGlobal.RETURN_ERROR;
@@ -241,6 +249,8 @@ public class Mirror extends ServiceBase {
         StringBuilder       headersLong = new StringBuilder();
         Enumeration<String> headerNames = null;
         StringBuilder       sHttpData = new StringBuilder();
+        StringBuilder       sHttpPayload = new StringBuilder();
+        StringBuilder       sDataPayload = new StringBuilder();
 
         // Initialization
         iResult = ConstGlobal.RETURN_OK;
@@ -315,9 +325,9 @@ public class Mirror extends ServiceBase {
                 sMsgLog = "javax.servlet.request.X509Certificate (serial): " + x509Certificate.getSerialNumber().toString(16)
                         + "\n\t" + dn;
             } else {
-                sMsgLog = "No (client) certificate received. / Nismo prejeli klient (client) certifikata.";
+                sMsgLog = "No (client) Certificate received. / Nismo prejeli klient (client) certifikata.";
             }
-            logger.info(sMsgLog);
+            //logger.info(sMsgLog);
             sHttpData.append(DEFINE_STR_NEWLINE).append(sMsgLog).append(DEFINE_STR_NEWLINE);
         }
 
@@ -330,7 +340,7 @@ public class Mirror extends ServiceBase {
                 sHttpData.append("--").append(DEFINE_STR_NEWLINE);
                 sHttpData.append("SSL_CLIENT_CERT: ").append(sslClientSerial).append(DEFINE_STR_NEWLINE);
                 sHttpData.append("\t").append(clientCert.getSubjectX500Principal().getName()).append(DEFINE_STR_NEWLINE);
-                logger.info("SSL_CLIENT_CERT:" + sslClientSerial);
+                //logger.info("SSL_CLIENT_CERT:" + sslClientSerial);
             }
         }
 
@@ -347,8 +357,32 @@ public class Mirror extends ServiceBase {
         }
 
         sHttpData.append(DEFINE_STR_NEWLINE).append("--").append(DEFINE_STR_NEWLINE);
-        sHttpData.append(DEFINE_STR_NEWLINE).append(DEFINE_STR_NEWLINE);
-        sHttpData.append("-- End of report. --<");
+
+        // Check previous step
+        if (iResult == ConstGlobal.RETURN_OK) {
+            iResult = readRequestData(request, sDataPayload);
+        }
+        if (iResult == ConstGlobal.RETURN_OK) {
+            if (sDataPayload.length() > 0) {
+                sHttpPayload.append("PayLoad: present  >  Length: ").append(sDataPayload.length()).append(DEFINE_STR_NEWLINE);
+                if (sDataPayload.length() < iLenPayloadMax) {
+                    sHttpPayload.append("PayLoad data:").append(DEFINE_STR_NEWLINE);
+                    sHttpPayload.append(sDataPayload).append(DEFINE_STR_NEWLINE);
+                }
+            } else {
+                sHttpPayload.append("PayLoad: not present  >  Length: ").append(sDataPayload.length()).append(DEFINE_STR_NEWLINE);
+            }
+        } else {
+            sHttpPayload.append("PayLoad: Unknown - error at data retrieve!").append(DEFINE_STR_NEWLINE);
+        }
+        if (iResult == ConstGlobal.RETURN_OK) {
+            if (sHttpPayload.length() > 0) {
+                sHttpData.append(sHttpPayload);
+            }
+        }
+
+        sHttpData.append(DEFINE_STR_NEWLINE);
+        sHttpData.append("-- End of Request report. --<");
 
         // Notify Service
         ServiceMirror.getInstance().notifyOnRequest(asMethod, sHttpData.toString());

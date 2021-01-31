@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!-- CHANGE LOG
+  ..
+-->
+<properties>
+	<comment>Configuration file for WebApp: servletMirror</comment>
+
+	<entry key = "App.Implementation">TEST</entry>
+	<entry key = "App.EnvType">servletMirror</entry>
+	<entry key = "App.VersionInfo">1</entry>
+
+	<entry key = "Http.Rest.Referer">.</entry>
+	<entry key = "Http.Rest.Origin">localhost</entry>
+
+	<entry key = "Result.Cache">true</entry>
+	<entry key = "Result.Cache.number">111</entry>
+
+	<entry key = "Http.Payload.Length">8196</entry>
+
+</properties>

@@ -32,11 +32,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: r1_1_1a
-          release_name: Release_1.1.1a
+          tag_name: r1_1_2a
+          release_name: Release_1.1.2a
           body: |
             Release - ${{ github.ref }}
-            Include counts per HTTP methods.
+            Include Payload data in HTTP(s) Request.
           draft: false
           prerelease: true
 
