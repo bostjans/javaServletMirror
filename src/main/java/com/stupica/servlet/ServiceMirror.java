@@ -17,9 +17,10 @@ public class ServiceMirror {
      */
     private static ServiceMirror objInstance;
 
-    public static boolean   isEnabled = true;
+    public boolean      isEnabledCache = true;
 
-    private final int   iCountMaxCache = 11;
+    private final int   iCountMaxCacheLimit = 12345678;
+    private int         iCountMaxCache = 11;
     private int         iCountCache = 0;
     String[]            arrCache = null;
 
@@ -35,7 +36,12 @@ public class ServiceMirror {
 
 
     private ServiceMirror() {
-        if (isEnabled) {
+        isEnabledCache = Setting.getConfig().getBoolean("Result.Cache", true);
+        iCountMaxCache = Setting.getConfig().getInt("Result.Cache.number", 111);
+        if (iCountMaxCache > iCountMaxCacheLimit)
+            iCountMaxCache = iCountMaxCacheLimit;
+
+        if (isEnabledCache) {
             arrCache = new String[iCountMaxCache];
         }
     }

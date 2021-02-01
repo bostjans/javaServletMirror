@@ -51,7 +51,6 @@
                 </Item>
             </Array>
         </Arg>
-
         <Set name="port">11080</Set>
     </New>
 
@@ -62,7 +61,7 @@
         <Set name="TrustStorePath"><SystemProperty name="jetty.ssl.truststore.path" default="cacerts-si.jks" /></Set>
         <Set name="TrustStorePassword"><SystemProperty name="jetty.ssl.truststore.password" default="secret" /></Set>
         <Set name="NeedClientAuth">
-            <Property name="jetty.needclientauth" default="true"/>
+            <Property name="jetty.needclientauth" default="false"/>
         </Set>
     </New>
 
@@ -91,7 +90,6 @@
                 </Item>
             </Array>
         </Arg>
-
         <Set name="port">11443</Set>
     </New>
 

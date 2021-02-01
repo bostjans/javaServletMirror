@@ -42,9 +42,19 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>mirror02Servlet</servlet-name>
+        <servlet-class>com.stupica.servlet.http.Mirror</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>mirror02Servlet</servlet-name>
+        <url-pattern>/v1/secure/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>mirrorShowServlet</servlet-name>
         <servlet-class>com.stupica.servlet.http.MirrorShow</servlet-class>
-        <load-on-startup>1</load-on-startup>
+        <load-on-startup>0</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>mirrorShowServlet</servlet-name>
@@ -86,7 +96,7 @@
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>Secure resources</web-resource-name>
-            <url-pattern>/v1/*</url-pattern>
+            <url-pattern>/v1/secure/*</url-pattern>
         </web-resource-collection>
         <user-data-constraint>
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>

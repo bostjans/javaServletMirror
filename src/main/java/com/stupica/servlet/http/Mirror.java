@@ -8,6 +8,7 @@ import com.stupica.core.UtilDate;
 import com.stupica.core.UtilString;
 import com.stupica.servlet.ServiceBase;
 import com.stupica.servlet.ServiceMirror;
+import com.stupica.servlet.Setting;
 
 import javax.security.auth.x500.X500Principal;
 import javax.servlet.ServletException;
@@ -36,6 +37,11 @@ public class Mirror extends ServiceBase {
     private static int      iLenPayloadMax = 8196;
 
     private static Logger logger = Logger.getLogger(Mirror.class.getName());
+
+
+    static {
+        iLenPayloadMax = Setting.getConfig().getInt("Http.Payload.Length", 8192);
+    }
 
 
     /**
