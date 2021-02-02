@@ -35,11 +35,13 @@ import static com.stupica.ConstWeb.*;
 public class Mirror extends ServiceBase {
 
     private static int      iLenPayloadMax = 8196;
+    private static boolean  bShouldDoFullResponse = false;
 
-    private static Logger logger = Logger.getLogger(Mirror.class.getName());
+    private static Logger   logger = Logger.getLogger(Mirror.class.getName());
 
 
     static {
+        bShouldDoFullResponse = Setting.getConfig().getBoolean("Http.Response.Full", true);
         iLenPayloadMax = Setting.getConfig().getInt("Http.Payload.Length", 8192);
     }
 
@@ -181,6 +183,7 @@ public class Mirror extends ServiceBase {
         // Local variables
         int             iResult;
         String          sHttpData = null;
+        StringBuilder   sResponse = new StringBuilder();
         PrintWriter     objOut = null;
         ResultProces    objResult;
 
@@ -189,23 +192,31 @@ public class Mirror extends ServiceBase {
         bVerifyReferal = false;
         objResult = new ResultProces();
 
+        sResponse.append("Method: ");
         if (asMethod.contentEquals(HTTP_METHOD_NAME_GET)) {
+            sResponse.append(HTTP_METHOD_NAME_GET);
             super.doGet(request, response);
         } else if (asMethod.contentEquals(HTTP_METHOD_NAME_PUT)) {
+            sResponse.append(HTTP_METHOD_NAME_PUT);
             super.doPut(request, response);
         } else if (asMethod.contentEquals(HTTP_METHOD_NAME_POST)) {
+            sResponse.append(HTTP_METHOD_NAME_POST);
             super.doPost(request, response);
         } else if (asMethod.contentEquals(HTTP_METHOD_NAME_OPTIONS)) {
+            sResponse.append(HTTP_METHOD_NAME_OPTIONS);
             super.doOptions(request, response);
         } else if (asMethod.contentEquals(HTTP_METHOD_NAME_PATCH)) {
+            sResponse.append(HTTP_METHOD_NAME_PATCH);
             super.doPost(request, response);
         } else if (asMethod.contentEquals(HTTP_METHOD_NAME_DELETE)) {
+            sResponse.append(HTTP_METHOD_NAME_DELETE);
             super.doDelete(request, response);
         } else {
             iResult = response.getStatus();
             objResult.sText = "doRequest(): Unknown method! asMethod: " + asMethod;
             logger.warning(objResult.sText);
             response.setStatus(ConstWeb.HTTP_RESP_NOT_FOUND);
+            sResponse.append("NA");
         }
 
         // Check ..
@@ -229,6 +240,12 @@ public class Mirror extends ServiceBase {
         }
 
         // Check previous step
+        if (iResult == ConstGlobal.RETURN_OK) {
+            sResponse.append("\t> Response: ").append(response.getStatus());
+            sResponse.append(DEFINE_STR_NEWLINE);
+        }
+
+        // Check previous step
         if (iResult != ConstGlobal.RETURN_ERROR) {
             objOut = response.getWriter();
             if (objOut == null) {
@@ -239,7 +256,10 @@ public class Mirror extends ServiceBase {
         //objOut.println("</pre>");
         if (objOut != null) {
             objOut.write(DEFINE_STR_NEWLINE);
-            objOut.write(sHttpData);
+            objOut.write(sResponse.toString());
+            if (bShouldDoFullResponse) {
+                objOut.write(sHttpData);
+            }
         }
         if (objOut != null) {
             objOut.close();

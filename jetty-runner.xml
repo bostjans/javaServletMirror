@@ -61,6 +61,7 @@
         <Set name="TrustStorePath"><SystemProperty name="jetty.ssl.truststore.path" default="cacerts-si.jks" /></Set>
         <Set name="TrustStorePassword"><SystemProperty name="jetty.ssl.truststore.password" default="secret" /></Set>
         <Set name="NeedClientAuth">
+            <!-- To enforce ClientCert > change this to TRUE. -->
             <Property name="jetty.needclientauth" default="false"/>
         </Set>
     </New>
