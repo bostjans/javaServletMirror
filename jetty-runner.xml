@@ -7,9 +7,12 @@
         <New id="Handlers" class="org.eclipse.jetty.server.handler.HandlerCollection">
             <Set name="handlers">
                 <Array type="org.eclipse.jetty.server.Handler">
+                    <!-- To enable/force HTTPS, uncomment following part. -->
+                    <!--
                     <Item>
                         <New id="SecuredRedirectHandler" class="org.eclipse.jetty.server.handler.SecuredRedirectHandler" />
                     </Item>
+                    -->
                     <Item>
                         <New id="Contexts" class="org.eclipse.jetty.server.handler.ContextHandlerCollection" />
                     </Item>

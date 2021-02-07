@@ -65,7 +65,7 @@ public class Mirror extends ServiceBase {
      *     curl -i --insecure https://localhost:11443/mirror/v1
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doRequest(HTTP_METHOD_NAME_GET, request, response);
+        doRequestMirror(HTTP_METHOD_NAME_GET, request, response);
     }
 
     /**
@@ -85,9 +85,10 @@ public class Mirror extends ServiceBase {
      *
      * @apiExample {curl} Example usage:
      *     curl -i -X PUT --insecure https://localhost:11443/mirror/v1
+     *     curl -i -X PUT --insecure https://localhost:11443/mirror/v1 --header "Content-Type: application/json" -d "{test:1}"
      */
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doRequest(HTTP_METHOD_NAME_PUT, request, response);
+        doRequestMirror(HTTP_METHOD_NAME_PUT, request, response);
     }
 
     /**
@@ -110,7 +111,7 @@ public class Mirror extends ServiceBase {
      *     curl -i -X POST --insecure https://localhost:11443/mirror/v1 --header "Content-Type: application/text" -d "test"
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doRequest(HTTP_METHOD_NAME_POST, request, response);
+        doRequestMirror(HTTP_METHOD_NAME_POST, request, response);
     }
 
     /**
@@ -132,7 +133,7 @@ public class Mirror extends ServiceBase {
      *     curl -i -X PATCH --insecure https://localhost:11443/mirror/v1
      */
     protected void doPatch(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doRequest(HTTP_METHOD_NAME_PATCH, request, response);
+        doRequestMirror(HTTP_METHOD_NAME_PATCH, request, response);
     }
 
     /**
@@ -154,7 +155,7 @@ public class Mirror extends ServiceBase {
      *     curl -i -X DELETE --insecure https://localhost:11443/mirror/v1
      */
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doRequest(HTTP_METHOD_NAME_DELETE, request, response);
+        doRequestMirror(HTTP_METHOD_NAME_DELETE, request, response);
     }
 
     /**
@@ -176,10 +177,10 @@ public class Mirror extends ServiceBase {
      *     curl -i -X OPTIONS --insecure https://localhost:11443/mirror/v1
      */
     protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doRequest(HTTP_METHOD_NAME_OPTIONS, request, response);
+        doRequestMirror(HTTP_METHOD_NAME_OPTIONS, request, response);
     }
 
-    protected void doRequest(String asMethod, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doRequestMirror(String asMethod, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Local variables
         int             iResult;
         String          sHttpData = null;
@@ -207,7 +208,7 @@ public class Mirror extends ServiceBase {
             super.doOptions(request, response);
         } else if (asMethod.contentEquals(HTTP_METHOD_NAME_PATCH)) {
             sResponse.append(HTTP_METHOD_NAME_PATCH);
-            super.doPost(request, response);
+            super.doPatch(request, response);
         } else if (asMethod.contentEquals(HTTP_METHOD_NAME_DELETE)) {
             sResponse.append(HTTP_METHOD_NAME_DELETE);
             super.doDelete(request, response);
@@ -309,7 +310,7 @@ public class Mirror extends ServiceBase {
             //long currentTimeMillis = System.currentTimeMillis();
             Date    dtNow = new Date();
             String requestIdent = "IdAccess/IdDostopa: " + ServiceMirror.iCountReq.get() + ":" + dtNow.getTime();
-            logger.info("doGet(): " + requestIdent);
+            logger.info("getReportText(): " + requestIdent);
             logger.fine(headers);
             sHttpData.append(requestIdent);
             sHttpData.append("\t\t-> TimeStamp: ").append(UtilDate.toUniversalString(dtNow)).append(DEFINE_STR_NEWLINE);
