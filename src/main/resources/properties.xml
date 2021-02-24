@@ -8,7 +8,7 @@
 
 	<entry key = "App.Implementation">TEST</entry>
 	<entry key = "App.EnvType">servletMirror</entry>
-	<entry key = "App.VersionInfo">1</entry>
+	<entry key = "App.VersionInfo">1.1</entry>
 
 	<entry key = "Http.Rest.Referer">.</entry>
 	<entry key = "Http.Rest.Origin">localhost</entry>

@@ -8,7 +8,7 @@ import com.stupica.core.UtilDate;
 import com.stupica.core.UtilString;
 import com.stupica.servlet.ServiceBase;
 import com.stupica.servlet.ServiceMirror;
-import com.stupica.servlet.Setting;
+import com.stupica.config.Setting;
 
 import javax.security.auth.x500.X500Principal;
 import javax.servlet.ServletException;

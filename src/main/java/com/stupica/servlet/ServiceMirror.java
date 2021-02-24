@@ -3,6 +3,7 @@ package com.stupica.servlet;
 
 import com.stupica.ConstGlobal;
 import com.stupica.core.UtilString;
+import com.stupica.config.Setting;
 
 import java.util.concurrent.atomic.AtomicLong;
 
