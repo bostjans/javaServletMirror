@@ -28,6 +28,7 @@ curl -i http://localhost:11080/mirror/
 ```
 ```
 curl -i http://localhost:11080/mirror/v1
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" http://localhost:11080/mirror/v1
 curl -i http://localhost:11080/mirror/v1/secure
 
 curl -i --insecure https://localhost:11443/mirror/v1

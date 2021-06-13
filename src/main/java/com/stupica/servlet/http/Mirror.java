@@ -1,6 +1,9 @@
 package com.stupica.servlet.http;
 
 
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.WriterConfig;
 import com.stupica.ConstGlobal;
 import com.stupica.ConstWeb;
 import com.stupica.ResultProces;
@@ -183,8 +186,12 @@ public class Mirror extends ServiceBase {
     protected void doRequestMirror(String asMethod, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Local variables
         int             iResult;
+        boolean         bResponseJson = false;
+        boolean         bResponseXml = false;
+        String          sTemp;
         String          sHttpData = null;
         StringBuilder   sResponse = new StringBuilder();
+        JsonObject      objResponseJson = null;
         PrintWriter     objOut = null;
         ResultProces    objResult;
 
@@ -193,24 +200,47 @@ public class Mirror extends ServiceBase {
         bVerifyReferal = false;
         objResult = new ResultProces();
 
+        // Check, if specific response type is requested (JSON, XML, ..)
+        sTemp = request.getHeader("Accept");
+        if (!UtilString.isEmptyTrim(sTemp)) {
+            if (sTemp.toLowerCase().contains("json")) {
+                bResponseJson = true;
+                objResponseJson = Json.object();
+            }
+            if (sTemp.toLowerCase().contains("xml"))
+                bResponseXml = true;
+        }
+
         sResponse.append("Method: ");
         if (asMethod.contentEquals(HTTP_METHOD_NAME_GET)) {
             sResponse.append(HTTP_METHOD_NAME_GET);
+            if (bResponseJson)
+                objResponseJson.add("Method", HTTP_METHOD_NAME_GET);
             super.doGet(request, response);
         } else if (asMethod.contentEquals(HTTP_METHOD_NAME_PUT)) {
             sResponse.append(HTTP_METHOD_NAME_PUT);
+            if (bResponseJson)
+                objResponseJson.add("Method", HTTP_METHOD_NAME_PUT);
             super.doPut(request, response);
         } else if (asMethod.contentEquals(HTTP_METHOD_NAME_POST)) {
             sResponse.append(HTTP_METHOD_NAME_POST);
+            if (bResponseJson)
+                objResponseJson.add("Method", HTTP_METHOD_NAME_POST);
             super.doPost(request, response);
         } else if (asMethod.contentEquals(HTTP_METHOD_NAME_OPTIONS)) {
             sResponse.append(HTTP_METHOD_NAME_OPTIONS);
+            if (bResponseJson)
+                objResponseJson.add("Method", HTTP_METHOD_NAME_OPTIONS);
             super.doOptions(request, response);
         } else if (asMethod.contentEquals(HTTP_METHOD_NAME_PATCH)) {
             sResponse.append(HTTP_METHOD_NAME_PATCH);
+            if (bResponseJson)
+                objResponseJson.add("Method", HTTP_METHOD_NAME_PATCH);
             super.doPatch(request, response);
         } else if (asMethod.contentEquals(HTTP_METHOD_NAME_DELETE)) {
             sResponse.append(HTTP_METHOD_NAME_DELETE);
+            if (bResponseJson)
+                objResponseJson.add("Method", HTTP_METHOD_NAME_DELETE);
             super.doDelete(request, response);
         } else {
             iResult = response.getStatus();
@@ -218,6 +248,9 @@ public class Mirror extends ServiceBase {
             logger.warning(objResult.sText);
             response.setStatus(ConstWeb.HTTP_RESP_NOT_FOUND);
             sResponse.append("NA");
+            if (bResponseJson)
+                objResponseJson.add("Method", "NA")
+                        .add("Text", "doRequest(): Unknown method! asMethod: " + asMethod);
         }
 
         // Check ..
@@ -229,10 +262,13 @@ public class Mirror extends ServiceBase {
 
         // Check previous step
         if (iResult == ConstGlobal.RETURN_OK) {
-            response.setContentType("text/plain; charset=UTF-8");
+            if (bResponseJson)
+                response.setContentType("application/json; charset=UTF-8");
+            else
+                response.setContentType("text/plain; charset=UTF-8");
             response.setCharacterEncoding("UTF-8");
 
-            sHttpData = getReportText(request, asMethod);
+            sHttpData = getReportText(request, asMethod, objResponseJson);
             if (UtilString.isEmptyTrim(sHttpData)) {
                 objResult.sText = "doRequest(): Request info. not collected! Status: " + response.getStatus();
                 logger.warning(objResult.sText);
@@ -244,6 +280,8 @@ public class Mirror extends ServiceBase {
         if (iResult == ConstGlobal.RETURN_OK) {
             sResponse.append("\t> Response: ").append(response.getStatus());
             sResponse.append(DEFINE_STR_NEWLINE);
+            if (bResponseJson)
+                objResponseJson.add("Response", response.getStatus());
         }
 
         // Check previous step
@@ -257,9 +295,13 @@ public class Mirror extends ServiceBase {
         //objOut.println("</pre>");
         if (objOut != null) {
             objOut.write(DEFINE_STR_NEWLINE);
-            objOut.write(sResponse.toString());
-            if (bShouldDoFullResponse) {
-                objOut.write(sHttpData);
+            if (bResponseJson) {
+                objOut.write(objResponseJson.toString(WriterConfig.PRETTY_PRINT));
+            } else {
+                objOut.write(sResponse.toString());
+                if (bShouldDoFullResponse) {
+                    objOut.write(sHttpData);
+                }
             }
         }
         if (objOut != null) {
@@ -268,9 +310,10 @@ public class Mirror extends ServiceBase {
     }
 
 
-    protected String getReportText(HttpServletRequest request, String asMethod) {
+    protected String getReportText(HttpServletRequest request, String asMethod, JsonObject aobjResponseJson) {
         // Local variables
         int             iResult;
+        boolean             bResponseJson = false;
         String              sMsgLog = null;
         String              headers = "";
         StringBuilder       headersLong = new StringBuilder();
@@ -278,12 +321,24 @@ public class Mirror extends ServiceBase {
         StringBuilder       sHttpData = new StringBuilder();
         StringBuilder       sHttpPayload = new StringBuilder();
         StringBuilder       sDataPayload = new StringBuilder();
+        JsonObject          objResponseJson = null;
+        JsonObject          objHeaderJson = null;
+        JsonObject          objCertJson = null;
+        JsonObject          objPayloadJson = null;
+        JsonObject          objTempJson = null;
 
         // Initialization
         iResult = ConstGlobal.RETURN_OK;
+        if (aobjResponseJson != null) {
+            bResponseJson = true;
+            objResponseJson = Json.object();
+        }
 
         // Check previous step
         if (iResult == ConstGlobal.RETURN_OK) {
+            if (bResponseJson) {
+                objHeaderJson = Json.object();
+            }
             headers = "Header(s): \n";
             headerNames = request.getHeaderNames();
             while (headerNames.hasMoreElements()) {
@@ -298,6 +353,8 @@ public class Mirror extends ServiceBase {
                     headers = headers + headerValue;
                 }
                 headers = headers + "\n";
+                if (bResponseJson)
+                    objHeaderJson.add(headerName, headerValue);
             }
         }
 
@@ -306,31 +363,73 @@ public class Mirror extends ServiceBase {
             sHttpData.append("--").append(DEFINE_STR_NEWLINE);
             sHttpData.append(".. HTTP Mirror").append(DEFINE_STR_NEWLINE);
             sHttpData.append("--").append(DEFINE_STR_NEWLINE);
+            if (bResponseJson) {
+                objResponseJson.add("httpStart11", "--");
+                objResponseJson.add("httpTitle", "HTTP Mirror");
+                objResponseJson.add("httpStart12", "--");
+                objTempJson = Json.object();
+            }
 
             //long currentTimeMillis = System.currentTimeMillis();
             Date    dtNow = new Date();
-            String requestIdent = "IdAccess/IdDostopa: " + ServiceMirror.iCountReq.get() + ":" + dtNow.getTime();
+            String  requestIdent = "IdAccess/IdDostopa: " + ServiceMirror.iCountReq.get() + ":" + dtNow.getTime();
+            if (bResponseJson)
+                objTempJson.add("IdAccess", ServiceMirror.iCountReq.get() + ":" + dtNow.getTime());
             logger.info("getReportText(): " + requestIdent);
             logger.fine(headers);
             sHttpData.append(requestIdent);
             sHttpData.append("\t\t-> TimeStamp: ").append(UtilDate.toUniversalString(dtNow)).append(DEFINE_STR_NEWLINE);
+            if (bResponseJson)
+                objTempJson.add("TimeStamp", UtilDate.toUniversalString(dtNow));
             sHttpData.append("Method: ").append(asMethod).append(DEFINE_STR_NEWLINE);
+            if (bResponseJson) {
+                objTempJson.add("Method", asMethod).add("filler11", "--");
+                objResponseJson.add("Id", objTempJson);
+            }
             sHttpData.append(DEFINE_STR_NEWLINE);
             sHttpData.append("--").append(DEFINE_STR_NEWLINE);
             sHttpData.append("AuthType:\t").append(request.getAuthType()).append(DEFINE_STR_NEWLINE);
+            if (bResponseJson)
+                objResponseJson.add("AuthType", request.getAuthType());
             sHttpData.append("ContextPath:\t").append(request.getContextPath()).append(DEFINE_STR_NEWLINE);
+            if (bResponseJson)
+                objResponseJson.add("ContextPath", request.getContextPath());
             sHttpData.append("PathInfo:\t").append(request.getPathInfo()).append(DEFINE_STR_NEWLINE);
+            if (bResponseJson)
+                objResponseJson.add("PathInfo", request.getPathInfo());
             sHttpData.append("RemoteUser:\t").append(request.getRemoteUser()).append(DEFINE_STR_NEWLINE);
+            if (bResponseJson)
+                objResponseJson.add("RemoteUser", request.getRemoteUser());
             sHttpData.append("RequestedSessionId:\t").append(request.getRequestedSessionId()).append(DEFINE_STR_NEWLINE);
+            if (bResponseJson)
+                objResponseJson.add("RequestedSessionId", request.getRequestedSessionId());
             sHttpData.append("RequestURI:\t").append(request.getRequestURI()).append(DEFINE_STR_NEWLINE);
+            if (bResponseJson)
+                objResponseJson.add("RequestURI", request.getRequestURI());
             sHttpData.append("RemoteAddr:\t").append(request.getRemoteAddr()).append(DEFINE_STR_NEWLINE);
+            if (bResponseJson)
+                objResponseJson.add("RemoteAddr", request.getRemoteAddr());
             sHttpData.append("RemoteHost:\t").append(request.getRemoteHost()).append("\t\t");
+            if (bResponseJson)
+                objResponseJson.add("RemoteHost", request.getRemoteHost());
             sHttpData.append("RemotePort:\t").append(request.getRemotePort()).append(DEFINE_STR_NEWLINE);
+            if (bResponseJson)
+                objResponseJson.add("RemotePort", request.getRemotePort());
             sHttpData.append("Scheme:\t").append(request.getScheme()).append(DEFINE_STR_NEWLINE);
+            if (bResponseJson)
+                objResponseJson.add("Scheme", request.getScheme());
             sHttpData.append("ServerName:\t").append(request.getServerName()).append("\t\t");
+            if (bResponseJson)
+                objResponseJson.add("ServerName", request.getServerName());
             sHttpData.append("ServerPort:\t").append(request.getServerPort()).append(DEFINE_STR_NEWLINE);
+            if (bResponseJson)
+                objResponseJson.add("ServerPort", request.getServerPort());
             sHttpData.append("SessionId:\t").append(request.getSession().getId()).append(DEFINE_STR_NEWLINE);
+            if (bResponseJson)
+                objResponseJson.add("SessionId", request.getSession().getId());
             sHttpData.append("\t").append(request.getSession()).append(DEFINE_STR_NEWLINE);
+            if (bResponseJson)
+                objResponseJson.add("Session", request.getSession().toString());
 
             sHttpData.append(DEFINE_STR_NEWLINE).append("--").append(DEFINE_STR_NEWLINE);
             sHttpData.append(headers);
@@ -338,10 +437,14 @@ public class Mirror extends ServiceBase {
                 sHttpData.append("--").append(DEFINE_STR_NEWLINE);
                 sHttpData.append(headersLong.toString()).append(DEFINE_STR_NEWLINE);
             }
+            if (bResponseJson)
+                objResponseJson.add("Header", objHeaderJson);
         }
 
         // Check previous step
         if (iResult == ConstGlobal.RETURN_OK) {
+            if (bResponseJson)
+                objCertJson = Json.object();
             sHttpData.append("--").append(DEFINE_STR_NEWLINE);
             X509Certificate[] certs = (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
             if (certs != null) {
@@ -351,8 +454,12 @@ public class Mirror extends ServiceBase {
                 x509Certificate.getSerialNumber();
                 sMsgLog = "javax.servlet.request.X509Certificate (serial): " + x509Certificate.getSerialNumber().toString(16)
                         + "\n\t" + dn;
+                if (bResponseJson)
+                    objCertJson.add("javax.servlet.request.X509Certificate.serial", x509Certificate.getSerialNumber().toString(16));
             } else {
                 sMsgLog = "No (client) Certificate received. / Nismo prejeli klient (client) certifikata.";
+                if (bResponseJson)
+                    objCertJson.add("javax.servlet.request.X509Certificate.serial", "No (client) Certificate received. / Nismo prejeli klient (client) certifikata.");
             }
             //logger.info(sMsgLog);
             sHttpData.append(DEFINE_STR_NEWLINE).append(sMsgLog).append(DEFINE_STR_NEWLINE);
@@ -368,6 +475,10 @@ public class Mirror extends ServiceBase {
                 sHttpData.append("SSL_CLIENT_CERT: ").append(sslClientSerial).append(DEFINE_STR_NEWLINE);
                 sHttpData.append("\t").append(clientCert.getSubjectX500Principal().getName()).append(DEFINE_STR_NEWLINE);
                 //logger.info("SSL_CLIENT_CERT:" + sslClientSerial);
+                if (bResponseJson) {
+                    objCertJson.add("SSL_CLIENT_CERT.serial", sslClientSerial);
+                    objCertJson.add("SSL_CLIENT_CERT.subject", clientCert.getSubjectX500Principal().getName());
+                }
             }
         }
 
@@ -380,8 +491,14 @@ public class Mirror extends ServiceBase {
                 sHttpData.append("--").append(DEFINE_STR_NEWLINE);
                 sHttpData.append("SSL_CLIENT_CERT_VS: ").append(sslClientSerial).append(DEFINE_STR_NEWLINE);
                 sHttpData.append("\t").append(clientCertVS.getSubjectX500Principal().getName()).append(DEFINE_STR_NEWLINE);
+                if (bResponseJson) {
+                    objCertJson.add("SSL_CLIENT_CERT_VS.serial", sslClientSerial);
+                    objCertJson.add("SSL_CLIENT_CERT_VS.subject", clientCertVS.getSubjectX500Principal().getName());
+                }
             }
         }
+        if (bResponseJson)
+            objResponseJson.add("Certificate", objCertJson);
 
         sHttpData.append(DEFINE_STR_NEWLINE).append("--").append(DEFINE_STR_NEWLINE);
 
@@ -390,21 +507,34 @@ public class Mirror extends ServiceBase {
             iResult = readRequestData(request, sDataPayload);
         }
         if (iResult == ConstGlobal.RETURN_OK) {
+            if (bResponseJson)
+                objPayloadJson = Json.object();
             if (sDataPayload.length() > 0) {
                 sHttpPayload.append("PayLoad: present  >  Length: ").append(sDataPayload.length()).append(DEFINE_STR_NEWLINE);
                 if (sDataPayload.length() < iLenPayloadMax) {
                     sHttpPayload.append("PayLoad data:").append(DEFINE_STR_NEWLINE);
                     sHttpPayload.append(sDataPayload).append(DEFINE_STR_NEWLINE);
+                    if (bResponseJson) {
+                        objPayloadJson.add("PayLoad.length", sDataPayload.length());
+                        objPayloadJson.add("PayLoad", sDataPayload.toString());
+                    }
                 }
             } else {
                 sHttpPayload.append("PayLoad: not present  >  Length: ").append(sDataPayload.length()).append(DEFINE_STR_NEWLINE);
+                if (bResponseJson)
+                    objPayloadJson.add("PayLoad.length", sDataPayload.length())
+                            .add("PayLoad", "not present");
             }
         } else {
             sHttpPayload.append("PayLoad: Unknown - error at data retrieve!").append(DEFINE_STR_NEWLINE);
+            if (bResponseJson)
+                objPayloadJson.add("PayLoad", "Unknown - error at data retrieve!");
         }
         if (iResult == ConstGlobal.RETURN_OK) {
             if (sHttpPayload.length() > 0) {
                 sHttpData.append(sHttpPayload);
+                if (bResponseJson)
+                    objResponseJson.add("PayLoad", objPayloadJson);
             }
         }
 
@@ -413,7 +543,11 @@ public class Mirror extends ServiceBase {
 
         // Notify Service
         ServiceMirror.getInstance().notifyOnRequest(asMethod, sHttpData.toString());
-        return sHttpData.toString();
+        if (bResponseJson) {
+            aobjResponseJson.add("http", objResponseJson);
+            return objResponseJson.toString(WriterConfig.PRETTY_PRINT);
+        } else
+            return sHttpData.toString();
     }
 
     private X509Certificate createCertificateFromString(String certFromSSLClientCertHeader) {
