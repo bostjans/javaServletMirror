@@ -23,7 +23,7 @@ jobs:
       - name: maven-settings-xml-action
         uses: whelk-io/maven-settings-xml-action@v14
         with:
-          repositories: '[{ "id": "bDev", "url": "http://developer.stupica.com/maven" }]'
+          repositories: '[{ "id": "bDev", "url": "https://developer.dev404.net/maven" }]'
       - name: Build with Maven
         run: mvn -B package --file pom.xml
       - name: CreateRelease
@@ -32,8 +32,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: r1_2_0
-          release_name: Release_1.2.0
+          tag_name: r1_2_0b
+          release_name: Release_1.2.0b
           body: |
             Release - ${{ github.ref }}
             Update libs.
