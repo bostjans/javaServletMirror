@@ -32,11 +32,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: r1_2_0b
-          release_name: Release_1.2.0b
+          tag_name: r1_2_1
+          release_name: Release_1.2.1
           body: |
             Release - ${{ github.ref }}
-            Update libs.
+            Return JSON Response.
           draft: false
           prerelease: false
 

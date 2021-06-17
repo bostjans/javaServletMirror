@@ -210,6 +210,16 @@ public class Mirror extends ServiceBase {
             if (sTemp.toLowerCase().contains("xml"))
                 bResponseXml = true;
         }
+        // Assume: if input Content-Type is JSON then produce Response in JSON
+        sTemp = request.getHeader("Content-Type");
+        if (!UtilString.isEmptyTrim(sTemp)) {
+            if (sTemp.toLowerCase().contains("json")) {
+                bResponseJson = true;
+                objResponseJson = Json.object();
+            }
+            if (sTemp.toLowerCase().contains("xml"))
+                bResponseXml = true;
+        }
 
         sResponse.append("Method: ");
         if (asMethod.contentEquals(HTTP_METHOD_NAME_GET)) {
