@@ -17,10 +17,7 @@ import javax.security.auth.x500.X500Principal;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -186,6 +183,7 @@ public class Mirror extends ServiceBase {
     protected void doRequestMirror(String asMethod, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Local variables
         int             iResult;
+        boolean         bRequestForm = false;
         boolean         bResponseJson = false;
         boolean         bResponseXml = false;
         String          sTemp;
@@ -219,6 +217,8 @@ public class Mirror extends ServiceBase {
             }
             if (sTemp.toLowerCase().contains("xml"))
                 bResponseXml = true;
+            if (sTemp.toLowerCase().contains("x-www-form-urlencoded"))
+                bRequestForm = true;
         }
 
         sResponse.append("Method: ");
@@ -278,7 +278,7 @@ public class Mirror extends ServiceBase {
                 response.setContentType("text/plain; charset=UTF-8");
             response.setCharacterEncoding("UTF-8");
 
-            sHttpData = getReportText(request, asMethod, objResponseJson);
+            sHttpData = getReportText(request, asMethod, objResponseJson, bRequestForm);
             if (UtilString.isEmptyTrim(sHttpData)) {
                 objResult.sText = "doRequest(): Request info. not collected! Status: " + response.getStatus();
                 logger.warning(objResult.sText);
@@ -320,7 +320,8 @@ public class Mirror extends ServiceBase {
     }
 
 
-    protected String getReportText(HttpServletRequest request, String asMethod, JsonObject aobjResponseJson) {
+    protected String getReportText(HttpServletRequest request, String asMethod, JsonObject aobjResponseJson,
+                                   boolean abRequestForm) {
         // Local variables
         int             iResult;
         boolean             bResponseJson = false;
@@ -514,7 +515,7 @@ public class Mirror extends ServiceBase {
 
         // Check previous step
         if (iResult == ConstGlobal.RETURN_OK) {
-            iResult = readRequestData(request, sDataPayload);
+            iResult = readRequestData(request, sDataPayload, abRequestForm);
         }
         if (iResult == ConstGlobal.RETURN_OK) {
             if (bResponseJson)
