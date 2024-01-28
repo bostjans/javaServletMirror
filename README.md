@@ -27,24 +27,28 @@ curl -i http://localhost:11080
 curl -i http://localhost:11080/mirror/
 ```
 ```
-curl -i http://localhost:11080/mirror/v1
-curl -i -H "Accept: application/json" -H "Content-Type: application/json" http://localhost:11080/mirror/v1
-curl -i http://localhost:11080/mirror/v1/secure
+curl -i http://localhost:11080/v1
+curl -i -H "Accept: application/json" -H "Content-Type: application/json" http://localhost:11080/v1
+curl -i http://localhost:11080/v1/secure
 
 curl -i --insecure https://localhost:11443/mirror/v1
 curl -i --insecure https://localhost:11443/mirror/v1/secure
 ```
+```
+ab -c 1 -n 1000 http://localhost:11080/mirror/get01/
+ab -c 2 -n 11000 http://localhost:11080/mirror/get02/
+```
 
 .. to see the result:
 ```
-curl -i http://localhost:11080/mirror/show/v1
-curl -i --insecure https://localhost:11443/mirror/show/v1
+curl -i http://localhost:11080/show/v1
+curl -i --insecure https://localhost:11443/show/v1
 ```
 
 
 Monitor page:
 ```
-curl -i http://localhost:11080/mirror/monitor/v1
+curl -i http://localhost:11080/monitor/v1
 ```
 
 

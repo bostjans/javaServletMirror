@@ -468,7 +468,7 @@ public class Mirror extends ServiceBase {
                 if (bResponseJson)
                     objCertJson.add("javax.servlet.request.X509Certificate.serial", x509Certificate.getSerialNumber().toString(16));
             } else {
-                sMsgLog = "No (client) Certificate received. / Nismo prejeli klient (client) certifikata.";
+                sMsgLog = "No (client) Certificate received. / Nismo prejeli klient (client) certifikata (po HTTP_Header: [javax.servlet.request.X509Certificate]).";
                 if (bResponseJson)
                     objCertJson.add("javax.servlet.request.X509Certificate.serial", "No (client) Certificate received. / Nismo prejeli klient (client) certifikata.");
             }

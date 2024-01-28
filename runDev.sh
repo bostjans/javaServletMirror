@@ -25,6 +25,6 @@ echo Starting server  ..
 #java -jar $PATH_JETTY_RUNNER/$FILE_JETTY_RUNNER --port 11080 --path /mirror $PATH_WAR/servletMirror.war
 java $VMparam -jar $PATH_JETTY_RUNNER/$FILE_JETTY_RUNNER \
   --config jetty-runner.xml \
-  --path /mirror $PATH_WAR/servletMirror.war
+  --path / $PATH_WAR/servletMirror.war
 
 exit 0
