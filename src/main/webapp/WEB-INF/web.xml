@@ -10,7 +10,7 @@
 
     <!-- Name the application -->
     <display-name>servletMirrorApp</display-name>
-    <description>Servlet Mirror WebApp - InterFac</description>
+    <description>Servlet Mirror WebApp - InterFace</description>
 
     <!-- ========================================================== -->
     <!-- Servlets -->
@@ -67,18 +67,6 @@
     <session-config>
         <session-timeout>1</session-timeout>
     </session-config>
-
-
-    <!-- ========================================================== -->
-    <!-- JNDI Environment Variables -->
-    <!-- ========================================================== -->
-    <!--
-    <env-entry>
-        <env-entry-name>JDBC_TYPE</env-entry-name>
-        <env-entry-type>java.lang.String</env-entry-type>
-        <env-entry-value>MySQL</env-entry-value>
-    </env-entry>
-    -->
 
 
     <!-- ========================================================== -->

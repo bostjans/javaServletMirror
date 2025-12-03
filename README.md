@@ -55,8 +55,7 @@ curl -i http://localhost:11080/monitor/v1
 ## Sample
 
 URL:
-* https://storitve.ezdrav.si/servis/preveriDostopnost
-* https://euez-test.ezdrav.si/servis/preveriDostopnost
+* https://n19b.stupica.com/test/request
 
 
 ## Reference
