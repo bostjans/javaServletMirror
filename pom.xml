@@ -5,21 +5,21 @@
     <!-- project coordinates.. -->
     <groupId>com.stupica.base</groupId>
     <artifactId>servletMirror</artifactId>
-    <version>1.2.3</version>
+    <version>1.3.0</version>
     <packaging>war</packaging>
     <name>servletMirror</name>
     <organization>
         <name>Developer404</name>
-        <url>http://www.stupica.com</url>
+        <url>https://www.stupica.com</url>
     </organization>
-    <url>http://developer.dev404.net/maven</url>
+    <url>https://github.com/bostjans/javaServletMirror</url>
 
     <properties>
         <java-version>1.8</java-version>
         <maven.compiler.source>${java-version}</maven.compiler.source>
         <maven.compiler.target>${java-version}</maven.compiler.target>
 
-        <version.jetty>9.4.36.v20210114</version.jetty>
+        <version.jetty>9.4.58.v20250814</version.jetty>
         <!--
         <version.jetty>10.0.0</version.jetty>
         -->
@@ -49,7 +49,7 @@
         <repository>
             <id>bDevRelease</id>
             <name>Developer404 Repository</name>
-            <url>http://developer.stupica.com/maven</url>
+            <url>https://developer.dev404.net/maven2/</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -66,7 +66,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.3.2</version>
+                <version>3.4.0</version>
                 <configuration>
                     <archive>
                         <manifestEntries>
@@ -103,7 +103,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.4.0</version>
+                <version>3.6.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -137,7 +137,7 @@
             <id>bostjanst</id>
             <name>Bostjan Stupica</name>
             <email>bostjan@stupica.com</email>
-            <url>http://www.stupica.com</url>
+            <url>https://www.stupica.com</url>
             <organization>Developer404</organization>
             <organizationUrl>http://www.stupica.com</organizationUrl>
             <roles>

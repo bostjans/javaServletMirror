@@ -5,6 +5,8 @@ import com.stupica.ConstGlobal;
 import com.stupica.core.UtilString;
 import com.stupica.config.Setting;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static com.stupica.ConstGlobal.DEFINE_STR_NEWLINE;
@@ -25,6 +27,9 @@ public class ServiceMirror {
     private int         iCountCache = 0;
     String[]            arrCache = null;
 
+    String[]            arrIPHide = null;
+    Map                 mapIPHide = null;
+
     public static AtomicLong  iCountReq = new AtomicLong();
     private AtomicLong  iCountReqGet = new AtomicLong();
     private AtomicLong  iCountReqPut = new AtomicLong();
@@ -37,6 +42,9 @@ public class ServiceMirror {
 
 
     private ServiceMirror() {
+        String      sTemp;
+        String[]    arrTemp;
+
         isEnabledCache = Setting.getConfig().getBoolean("Result.Cache", true);
         iCountMaxCache = Setting.getConfig().getInt("Result.Cache.number", 111);
         if (iCountMaxCache > iCountMaxCacheLimit)
@@ -44,6 +52,27 @@ public class ServiceMirror {
 
         if (isEnabledCache) {
             arrCache = new String[iCountMaxCache];
+        }
+
+        sTemp = Setting.getConfig().getString("Sec.IPHide", "");
+        if (!UtilString.isEmptyTrim(sTemp)) {
+            arrIPHide = sTemp.split(";");
+        }
+        if (arrIPHide != null) {
+            if (arrIPHide.length > 0) {
+                mapIPHide = new HashMap<>();
+                for (int i = 0; i < arrIPHide.length; i++) {
+                    if (!UtilString.isEmptyTrim(arrIPHide[i])) {
+                        arrTemp = arrIPHide[i].split("\\=");
+                        if ((!UtilString.isEmptyTrim(arrTemp[0])) && (!UtilString.isEmptyTrim(arrTemp[1]))) {
+                            mapIPHide.putIfAbsent(arrTemp[0], arrTemp[1]);
+                        }
+                    }
+                }
+                if (mapIPHide.isEmpty()) {
+                    mapIPHide = null;
+                }
+            }
         }
     }
 
@@ -121,5 +150,17 @@ public class ServiceMirror {
             sResult.append("No Data.");
         }
         return sResult.toString();
+    }
+
+
+    public synchronized String getHideIP(String asIP) {
+        String  sResult = null;
+
+        if ((UtilString.isEmptyTrim(asIP)) || (mapIPHide == null))
+            return sResult;
+
+        if (mapIPHide.containsKey(asIP))
+            sResult = mapIPHide.getOrDefault(asIP, "/").toString();
+        return sResult;
     }
 }

@@ -371,6 +371,9 @@ public class Mirror extends ServiceBase {
 
         // Check previous step
         if (iResult == ConstGlobal.RETURN_OK) {
+            String  sRemoteAddr, sRemoteAddrReplaced, sRemoteAddrOutput;
+            String  sRemoteHost, sRemoteHostReplaced, sRemoteHostOutput;
+
             sHttpData.append("--").append(DEFINE_STR_NEWLINE);
             sHttpData.append(".. HTTP Mirror").append(DEFINE_STR_NEWLINE);
             sHttpData.append("--").append(DEFINE_STR_NEWLINE);
@@ -380,6 +383,20 @@ public class Mirror extends ServiceBase {
                 objResponseJson.add("httpStart12", "--");
                 objTempJson = Json.object();
             }
+
+            sRemoteAddr = request.getRemoteAddr();
+            sRemoteAddrReplaced = ServiceMirror.getInstance().getHideIP(sRemoteAddr);
+            if (sRemoteAddrReplaced == null)
+                sRemoteAddrOutput = sRemoteAddr;
+            else
+                sRemoteAddrOutput = sRemoteAddrReplaced;
+
+            sRemoteHost = request.getRemoteHost();
+            sRemoteHostReplaced = ServiceMirror.getInstance().getHideIP(sRemoteHost);
+            if (sRemoteHostReplaced == null)
+                sRemoteHostOutput = sRemoteHost;
+            else
+                sRemoteHostOutput = sRemoteHostReplaced;
 
             //long currentTimeMillis = System.currentTimeMillis();
             Date    dtNow = new Date();
@@ -417,12 +434,12 @@ public class Mirror extends ServiceBase {
             sHttpData.append("RequestURI:\t").append(request.getRequestURI()).append(DEFINE_STR_NEWLINE);
             if (bResponseJson)
                 objResponseJson.add("RequestURI", request.getRequestURI());
-            sHttpData.append("RemoteAddr:\t").append(request.getRemoteAddr()).append(DEFINE_STR_NEWLINE);
+            sHttpData.append("RemoteAddr:\t").append(sRemoteAddrOutput).append(DEFINE_STR_NEWLINE);
             if (bResponseJson)
-                objResponseJson.add("RemoteAddr", request.getRemoteAddr());
-            sHttpData.append("RemoteHost:\t").append(request.getRemoteHost()).append("\t\t");
+                objResponseJson.add("RemoteAddr", sRemoteAddrOutput);
+            sHttpData.append("RemoteHost:\t").append(sRemoteHostOutput).append("\t\t");
             if (bResponseJson)
-                objResponseJson.add("RemoteHost", request.getRemoteHost());
+                objResponseJson.add("RemoteHost", sRemoteHostOutput);
             sHttpData.append("RemotePort:\t").append(request.getRemotePort()).append(DEFINE_STR_NEWLINE);
             if (bResponseJson)
                 objResponseJson.add("RemotePort", request.getRemotePort());

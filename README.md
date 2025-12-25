@@ -35,8 +35,12 @@ curl -i --insecure https://localhost:11443/mirror/v1
 curl -i --insecure https://localhost:11443/mirror/v1/secure
 ```
 ```
-ab -c 1 -n 1000 http://localhost:11080/mirror/get01/
-ab -c 2 -n 11000 http://localhost:11080/mirror/get02/
+ab -v 2 -c 1 -n 10 -l http://localhost:11080/mirror/get01/
+ab -v 1 -c 1 -n 1000 -l http://localhost:11080/mirror/get01/
+ab -c 2 -n 11000 -l http://localhost:11080/mirror/get02/
+ab -c 4 -n 22000 -l http://localhost:11080/mirror/get04/
+ab -c 8 -n 42000 -l http://localhost:11080/mirror/get08/
+ab -c 16 -n 82000 -l http://localhost:11080/mirror/get16/
 ```
 
 .. to see the result:

@@ -19,4 +19,5 @@
 	<entry key = "Http.Response.Full">true</entry>
 	<entry key = "Http.Payload.Length">8196</entry>
 
+	<entry key = "Sec.IPHide">127.0.0.1=localhostIPv4;0:0:0:0:0:0:0:1=localhostIPv6;[0:0:0:0:0:0:0:1]=localhostIPv6</entry>
 </properties>
